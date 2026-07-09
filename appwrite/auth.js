@@ -1,4 +1,5 @@
 import conf from "../conf/conf";
+import service from "./config";
 
 import { Client, Account, ID } from "appwrite";
 
