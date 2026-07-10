@@ -18,8 +18,8 @@ function Signup() {
     const Signup = async (data) => {
         setErr("");
         try {
-            const userData = await authService.createAccount(data)
-            if (userData) {
+            const session = await authService.createAccount(data)
+            if (session) {
                 const userData = await authService.getCurrentUser()
                 if (userData) {
                     dispatch(login(userData))
@@ -58,7 +58,6 @@ function Signup() {
                 </p>
 
                 {err && <p className="text-red-600 mt-8 text-center">{err}</p>}
-
                 <form onSubmit={handleSubmit(Signup)}>
                     <div className='space-y-5'>
                         <Input
@@ -68,6 +67,7 @@ function Signup() {
                                 required: true,
                             })}
                         />
+
                         {/* username */}
                         <Input
                             label="Username:"
@@ -86,6 +86,7 @@ function Signup() {
                             })}
                         />
 
+
                         {/* Email */}
                         <Input
                             label="Email: "
@@ -95,10 +96,11 @@ function Signup() {
                                 required: true,
                                 validate: {
                                     matchPatern: (value) => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
-                                        "Email address must be a valid address",
+                                        "Email address must be valid"
                                 }
                             })}
                         />
+
 
                         {/* Password */}
                         <Input
@@ -109,6 +111,7 @@ function Signup() {
                                 required: true,
                             })}
                         />
+
                         <Button type="submit" className="w-full">
                             Create Account
                         </Button>

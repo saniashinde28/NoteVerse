@@ -107,7 +107,7 @@ export class Service {
 
     async createProfile({ userId, username, name }) {
         try {
-            return await this.databases.createDocument(
+            const response=await this.databases.createDocument(
                 conf.appwriteDatabaseId,
                 conf.profileCollectionId,
                 ID.unique(),
@@ -117,9 +117,13 @@ export class Service {
                     name
                 }
             );
+
+        console.log("Profile created:", response);
+        return response;
         } catch (err) {
             console.log("Create Profile Error:", err);
-            return false;
+            console.error("CREATE PROFILE FAILED");
+            throw err;
         }
     }
 

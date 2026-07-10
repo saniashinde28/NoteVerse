@@ -92,7 +92,11 @@ function PostForm({ post }) {
 
     }, [watch, slugTransform, setValue])
     return (
-        <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
+        <form onSubmit={handleSubmit((data) => {
+            console.log("FORM SUBMITTED");
+            console.log(data);
+            submit(data);
+        })} className="flex flex-wrap">
             {/* left part occupying 2/3 rd */}
             <div className="w-2/3 px-2">
                 <Input
