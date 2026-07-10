@@ -14,10 +14,15 @@ export class AuthService {
         this.account = new Account(this.client);
     }
 
-    async createAccount({ email, password, name }) {
+    async createAccount({ email, password, name,username }) {
         try {
             const userAccount = await this.account.create(ID.unique(), email, password, name);
             if (userAccount) {
+                await service.createProfile({
+                    userId:userAccount.$id,
+                    name,
+                    username
+                });
                 return this.login({ email, password });
 
             }
