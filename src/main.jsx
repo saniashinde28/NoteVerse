@@ -11,6 +11,7 @@ import Login from './Pages/Login.jsx'
 import AddPost from "./Pages/AddPost";
 import Signup from './Pages/Signup'
 import EditPost from "./Pages/EditPost";
+import Profile from './Pages/Profile.jsx'
 
 import Post from "./Pages/Post";
 
@@ -72,11 +73,20 @@ const router = createBrowserRouter([
         path: "/post/:slug",
         element: <Post />,
       },
+      {
+        path: "/profile/:username",
+        element: (
+          <Protected authentication>
+            {" "}
+            <Profile />
+          </Protected>
+        )
+      }
     ],
   },
 ])
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
-    <RouterProvider router={router}/>
+    <RouterProvider router={router} />
   </Provider>
 )
