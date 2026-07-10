@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import service from "../../appwrite/config";
-import { Button,Container } from "../components";
+import { Button, Container } from "../components";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
 
 export default function Post() {
+    const [author, setAuthor] = useState(null);
     const [post, setPost] = useState(null);
     const { slug } = useParams();
     const navigate = useNavigate();
@@ -15,18 +16,32 @@ export default function Post() {
     const isAuthor = post && userData ? post.userId === userData.$id : false;
 
     useEffect(() => {
-        if (slug) {
-            service.getPost(slug).then((post) => {
-                if (post) setPost(post);
-                else navigate("/");
-            });
-        } else navigate("/");
-    }, [slug, navigate]);
+
+        async function postPage() {
+            if (!slug) {
+                navigate("/");
+                return;
+            }
+            const post = await service.getPost(slug);
+            if (!post) {
+                navigate("/");
+                return;
+            }
+            setPost(post);
+
+            const profile = await service.getProfileByUserId(post.userId);
+            setAuthor(profile);
+
+
+
+            }
+            postPage();
+        }, [slug, navigate]);
 
     const deletePost = () => {
         service.deletePost(post.$id).then((status) => {  //if deleted, status returns TRUE
             if (status) {
-                appwriteService.deleteFile(post.featuredImage);
+                service.deleteFile(post.featuredImage);
                 navigate("/");
             }
         });
@@ -58,6 +73,17 @@ export default function Post() {
                 <div className="w-full mb-6">
                     <h1 className="text-2xl font-bold">{post.title}</h1>
                 </div>
+
+                {author && (
+                    <div className="mb-4">
+                        <Link
+                            to={`/profile/${author.username}`}
+                            className="text-blue-600 font-medium hover:underline"
+                        >
+                            By @{author.username}
+                        </Link>
+                    </div>
+                )}
                 <div className="browser-css">
                     {parse(post.content)}
                 </div>
