@@ -123,6 +123,53 @@ export class Service {
         }
     }
 
+    async getProfile(username) {
+        try {
+            const result = await this.databases.listDocuments(
+                conf.appwriteDatabaseId,
+                conf.profileCollectionId,
+                [
+                    Query.equal("username", username)
+                ]
+            )
+
+            return result.documents[0]
+        } catch (err) {
+            console.log("Get Profile Error:", err)
+        }
+    }
+
+    async getProfileByUserId(userId) {
+        try {
+            const result = await this.databases.listDocuments(
+                conf.appwriteDatabaseId,
+                conf.profileCollectionId,
+                [
+                    Query.equal("userId", userId)
+                ]
+            )
+
+            return result.documents[0]
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    async getPostsByUser(userId) {
+        try {
+            return await this.databases.listDocuments(
+                conf.appwriteDatabaseId,
+                conf.appwriteCollectionId,
+                [
+                    Query.equal("userId", userId),
+                    Query.equal("status", "active")
+                ]
+            )
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     //file upload services
     async uploadFile(file) {
         try {
