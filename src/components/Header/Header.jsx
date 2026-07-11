@@ -1,71 +1,145 @@
 import React from "react";
-import { Container, Logo, LogoutBtn } from "../index"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+
+import { Container, Logo, LogoutBtn } from "../index";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Avatar,
+  AvatarFallback,
+} from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import { Search, PenSquare } from "lucide-react";
 
 function Header() {
-    //to check whether anyone is logged in or not
-    const authStatus = useSelector((state) => state.status);
-    //whenever we use navigate, we make an array and loop over it
-    const navigate = useNavigate()
+  const authStatus = useSelector((state) => state.status);
+  const userData = useSelector((state) => state.userData);
+  const profile = useSelector((state)=>state.profile);
 
-    const navItems = [
-        {
-            name: 'Home',
-            slug: "/",
-            active: true
+  const navigate = useNavigate();
 
-        },
-        {
-            name: "Login",
-            slug: "/login",
-            active: !authStatus,
-        },
-        {
-            name: "Signup",
-            slug: "/signup",
-            active: !authStatus,
-        },
-        {
-            name: "All Posts",
-            slug: "/all-posts",
-            active: authStatus,
-        },
-        {
-            name: "Add Post",
-            slug: "/add-post",
-            active: authStatus,
-        },
-    ]
-    return (
-        <header className="py-3 shadow bg-gray-500">
-            <Container>
-                <nav className="flex">
-                    <div className="mr-4">
-                        <Link to="/">
-                        <Logo width='70px'/></Link>
-                    </div>
-                    <ul className="flex ml-auto">
-                        {navItems.map((item)=>(
-                            item.active ?<li key={item.name}>
-                                <button onClick={()=>(navigate(item.slug))}
-                                    className='inline-bock px-6 py-2 duration-200 hover:bg-blue-100 rounded-full'
-                                    >
-                                        {item.name}
-                                </button>
-                            </li> :null
-                        ))}
-                        {authStatus && (
-                            <li key="logout">
-                                <LogoutBtn/>
-                            </li>
-                        )}
-                    </ul>
-                </nav>
-            </Container>
-        </header>
-    )
+  const navItems = [
+    {
+      name: "Home",
+      slug: "/",
+      active: true,
+    },
+    {
+      name: "All Posts",
+      slug: "/all-posts",
+      active: authStatus,
+    },
+    {
+      name: "Login",
+      slug: "/login",
+      active: !authStatus,
+    },
+    {
+      name: "Signup",
+      slug: "/signup",
+      active: !authStatus,
+    },
+  ];
+
+  return (
+    <header className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur">
+      <Container>
+        <nav className="flex h-16 items-center justify-between">
+
+          {/* Logo */}
+          <Link
+            to="/"
+            className="flex items-center gap-2"
+          >
+            <Logo width="40px" />
+            <span className="text-xl font-bold">
+              SnapBlog
+            </span>
+          </Link>
+
+          {/* Center Navigation */}
+          <ul className="hidden md:flex items-center gap-2">
+            {navItems.map(
+              (item) =>
+                item.active && (
+                  <li key={item.name}>
+                    <Button
+                      variant="ghost"
+                      onClick={() => navigate(item.slug)}
+                    >
+                      {item.name}
+                    </Button>
+                  </li>
+                )
+            )}
+          </ul>
+
+          {/* Right Side */}
+          <div className="flex items-center gap-3">
+
+            {/* Search */}
+            <div className="relative hidden lg:block">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+
+              <Input
+                placeholder="Search posts..."
+                className="w-64 pl-9"
+              />
+            </div>
+
+            {/* Add Post */}
+            {authStatus && (
+              <Button
+                className="bg-green-600 hover:bg-green-700"
+                onClick={() => navigate("/add-post")}
+              >
+                <PenSquare className="mr-2 h-4 w-4" />
+                Write
+              </Button>
+            )}
+
+            {/* Avatar */}
+            {authStatus && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Avatar className="cursor-pointer">
+                    <AvatarFallback>
+                      {userData?.name
+                        ? profile.name.charAt(0).toUpperCase()
+                        : "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+
+                <DropdownMenuContent align="end">
+
+                  {/* Change this route later when profile routing is ready */}
+                  <DropdownMenuItem
+                    onClick={() => navigate(`/profile/${profile.username}`)}
+                  >
+                    Profile
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem asChild>
+                    <LogoutBtn />
+                  </DropdownMenuItem>
+
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
+        </nav>
+      </Container>
+    </header>
+  );
 }
 
-export default Header
+export default Header;
