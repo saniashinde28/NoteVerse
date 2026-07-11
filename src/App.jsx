@@ -1,39 +1,53 @@
-import { useState,useEffect } from 'react'
-import {useDispatch} from 'react-redux';
+import { useState, useEffect } from 'react'
+import { useDispatch } from 'react-redux';
 import './App.css'
 import authService from '../appwrite/auth';
-import {login,logout} from '../store/authSlice'
+import { login, logout } from '../store/authSlice'
 import { Outlet } from 'react-router-dom';
 import { Header } from './components';
-import {Footer} from './components';
+import { Footer } from './components';
+import service from '../appwrite/config';
 
 function App() {
   //loading state for conditional rendering
-  const [loading,setLoading]=useState(true)
-  const dispatch=useDispatch()
+  const [loading, setLoading] = useState(true)
+  const dispatch = useDispatch()
 
-  useEffect(()=>{
-    authService.getCurrentUser()
-    .then((userData)=>{
-      if(userData){
-        dispatch(login(userData))
-      }
-      else{
-        dispatch(logout())
-      }
-    })
-    .finally(()=>setLoading(false))
-  },[])
+  useEffect(() => {
+    async function loadUser() {
 
-  return !loading? <div className='min-h-screen flex flex-wrap content-n=between bg-gray-400'>
+      const userData = await authService.getCurrentUser();
+
+      if (userData) {
+
+        const profile = await service.getProfileByUserId(userData.$id);
+
+        dispatch(
+          login({
+            userData,
+            profile
+          })
+        );
+
+      } else {
+        dispatch(logout());
+      }
+
+      setLoading(false);
+    }
+
+    loadUser();
+  }, [])
+
+  return !loading ? <div className='min-h-screen flex flex-wrap content-n=between bg-gray-400'>
     <div className='w-full block'>
-      <Header/>
+      <Header />
       <main>
-        <Outlet/>
+        <Outlet />
       </main>
-      <Footer/>
+      <Footer />
     </div>
-  </div>:(null)
+  </div> : (null)
 }
 
 export default App
