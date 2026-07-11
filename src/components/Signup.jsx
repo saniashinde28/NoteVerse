@@ -7,6 +7,7 @@ import { login } from "../../store/authSlice";
 import { Button, Input, Logo } from './index'
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
+import service from "../../appwrite/config";
 
 function Signup() {
     const navigate = useNavigate()
@@ -21,7 +22,7 @@ function Signup() {
             const session = await authService.createAccount(data)
             if (session) {
                 const userData = await authService.getCurrentUser()
-                const profile = await service.getCurrentUser(userData.$id);
+                const profile = await service.getProfileByUserId(userData.$id);
                 if (userData) {
                     dispatch(login({
                         userData,

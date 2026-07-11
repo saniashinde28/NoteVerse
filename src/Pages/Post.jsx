@@ -34,9 +34,9 @@ export default function Post() {
 
 
 
-            }
-            postPage();
-        }, [slug, navigate]);
+        }
+        postPage();
+    }, [slug, navigate]);
 
     const deletePost = () => {
         service.deletePost(post.$id).then((status) => {  //if deleted, status returns TRUE
@@ -48,45 +48,84 @@ export default function Post() {
     };
 
     return post ? (
-        <div className="py-8">
+        <div className="py-12">
             <Container>
-                <div className="w-full flex justify-center mb-4 relative border rounded-xl p-2">
-                    <img
-                        src={service.getFileView(post.featuredImage)}
-                        alt={post.title}
-                        className="rounded-xl"
-                    />
+                <article className="mx-auto max-w-4xl">
 
-                    {isAuthor && (
-                        <div className="absolute right-6 top-6">
-                            <Link to={`/edit-post/${post.$id}`}>
-                                <Button bgColor="bg-green-500" className="mr-3">
-                                    Edit
-                                </Button>
-                            </Link>
-                            <Button bgColor="bg-red-500" onClick={deletePost}>
-                                Delete
-                            </Button>
+                    {/* Title */}
+                    <div className="mb-8">
+
+                        <h1 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight text-slate-900">
+                            {post.title}
+                        </h1>
+
+                        <div className="mt-5 flex items-center justify-between flex-wrap gap-4">
+
+                            {author && (
+                                <Link
+                                    to={`/profile/${author.username}`}
+                                    className="text-base text-slate-600 hover:text-black transition"
+                                >
+                                    Written by{" "}
+                                    <span className="font-semibold">
+                                        @{author.username}
+                                    </span>
+                                </Link>
+                            )}
+
+                            {isAuthor && (
+                                <div className="flex gap-3">
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => navigate(`/edit-post/${post.$id}`)}
+                                    >
+                                        Edit
+                                    </Button>
+
+                                    <Button
+                                        variant="destructive"
+                                        onClick={deletePost}
+                                    >
+                                        Delete
+                                    </Button>
+                                </div>
+                            )}
+
                         </div>
-                    )}
-                </div>
-                <div className="w-full mb-6">
-                    <h1 className="text-2xl font-bold">{post.title}</h1>
-                </div>
 
-                {author && (
-                    <div className="mb-4">
-                        <Link
-                            to={`/profile/${author.username}`}
-                            className="text-blue-600 font-medium hover:underline"
-                        >
-                            By @{author.username}
-                        </Link>
                     </div>
-                )}
-                <div className="browser-css">
-                    {parse(post.content)}
-                </div>
+
+                    {/* Featured Image */}
+
+                    <div className="mb-10 flex justify-center">
+                        <img
+                            src={service.getFileView(post.featuredImage)}
+                            alt={post.title}
+                            className="w-full max-w-3xl h-[350px] rounded-2xl object-cover shadow-md"
+                        />
+                    </div>
+
+                    <hr className="mb-10" />
+
+                    {/* Content */}
+
+                    <div
+                        className="
+            prose
+            prose-lg
+            max-w-none
+            prose-headings:font-bold
+            prose-img:rounded-xl
+            prose-pre:rounded-xl
+            prose-a:text-blue-600
+            prose-p:text-slate-700
+            prose-p:leading-8
+          "
+                    >
+                        {parse(post.content)}
+                    </div>
+
+                </article>
             </Container>
         </div>
     ) : null;

@@ -22,7 +22,7 @@ import { Search, PenSquare } from "lucide-react";
 function Header() {
   const authStatus = useSelector((state) => state.status);
   const userData = useSelector((state) => state.userData);
-  const profile = useSelector((state)=>state.profile);
+  const profile = useSelector((state) => state.profile);
 
   const navigate = useNavigate();
 
@@ -112,9 +112,9 @@ function Header() {
                 <DropdownMenuTrigger asChild>
                   <Avatar className="cursor-pointer">
                     <AvatarFallback>
-                      {userData?.name
-                        ? profile.name.charAt(0).toUpperCase()
-                        : "U"}
+                      {(profile?.name || userData?.name || "U")
+                        .charAt(0)
+                        .toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
@@ -123,7 +123,10 @@ function Header() {
 
                   {/* Change this route later when profile routing is ready */}
                   <DropdownMenuItem
-                    onClick={() => navigate(`/profile/${profile.username}`)}
+                    onClick={() =>{
+                      if(profile)navigate(`/profile/${profile.username}`)}
+
+                    } 
                   >
                     Profile
                   </DropdownMenuItem>
