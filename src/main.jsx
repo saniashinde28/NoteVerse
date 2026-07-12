@@ -12,6 +12,7 @@ import AddPost from "./Pages/AddPost";
 import Signup from './Pages/Signup'
 import EditPost from "./Pages/EditPost";
 import Profile from './Pages/Profile.jsx'
+import Search from './Pages/Search'
 
 import Post from "./Pages/Post";
 
@@ -81,7 +82,11 @@ const router = createBrowserRouter([
             <Profile />
           </Protected>
         )
-      }
+      },
+      {
+        path: "/search",
+        element: <Search />,
+      },
     ],
   },
 ])

@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useState } from "react";
 
 import { Container, Logo, LogoutBtn } from "../index";
 
@@ -20,6 +21,7 @@ import {
 import { Search, PenSquare } from "lucide-react";
 
 function Header() {
+  const [query, setQuery] = useState("");
   const authStatus = useSelector((state) => state.status);
   const userData = useSelector((state) => state.userData);
   const profile = useSelector((state) => state.profile);
@@ -92,6 +94,14 @@ function Header() {
               <Input
                 placeholder="Search posts..."
                 className="w-64 pl-9"
+                value={query}
+                onChange={(e)=>setQuery(e.target.value)}
+                onKeyDown={(e)=>{
+                  if(e.key=="Enter" && query.trim()){
+                    navigate(`/search?q=${encodeURIComponent(query)}`)
+                    setQuery("");
+                  }
+                }}
               />
             </div>
 
