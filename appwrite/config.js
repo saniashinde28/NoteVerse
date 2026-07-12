@@ -105,9 +105,28 @@ export class Service {
 
     }
 
+    async searchPosts(query) {
+        try {
+            await this.databases.listDocuments(
+                conf.appwriteDatabaseId,
+                conf.appwriteCollectionId,
+                [
+                    Query.equal("status", "active"),
+                    Query.search("title", query)
+                ]
+            );
+
+        } catch (err) {
+            console.log("Appwrite Search Error:", err);
+            return false;
+
+        }
+
+    }
+
     async createProfile({ userId, username, name }) {
         try {
-            const response=await this.databases.createDocument(
+            const response = await this.databases.createDocument(
                 conf.appwriteDatabaseId,
                 conf.profileCollectionId,
                 ID.unique(),
@@ -118,8 +137,8 @@ export class Service {
                 }
             );
 
-        console.log("Profile created:", response);
-        return response;
+            console.log("Profile created:", response);
+            return response;
         } catch (err) {
             console.log("Create Profile Error:", err);
             console.error("CREATE PROFILE FAILED");
