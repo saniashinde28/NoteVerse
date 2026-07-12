@@ -107,7 +107,7 @@ export class Service {
 
     async searchPosts(query) {
         try {
-            await this.databases.listDocuments(
+            return await this.databases.listDocuments(
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
                 [

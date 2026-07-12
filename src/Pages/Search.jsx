@@ -13,12 +13,17 @@ function Search() {
 
     useEffect(() => {
         async function searchPosts() {
-            const res = await service.getPosts();
+
+            if (!query.trim()) {
+                setPosts([]);
+                setLoading(false);
+                return;
+            }
+            const res = await service.searchPosts(query);
+            console.log("Query:", query);
+            console.log("Response:", res);
             if (res) {
-                const filtered = res.documents.filter((post) => (
-                    post.title.toLowerCase().includes(query.toLowerCase())
-                ));
-                setPosts(filtered);
+                setPosts(res.documents);
             }
             setLoading(false);
 

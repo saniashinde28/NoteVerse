@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useState } from "react";
+import { SearchBar } from "../index";
 
 import { Container, Logo, LogoutBtn } from "../index";
 
@@ -21,7 +22,7 @@ import {
 import { Search, PenSquare } from "lucide-react";
 
 function Header() {
-  const [query, setQuery] = useState("");
+
   const authStatus = useSelector((state) => state.status);
   const userData = useSelector((state) => state.userData);
   const profile = useSelector((state) => state.profile);
@@ -88,22 +89,8 @@ function Header() {
           <div className="flex items-center gap-3">
 
             {/* Search */}
-            <div className="relative hidden lg:block">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-
-              <Input
-                placeholder="Search posts..."
-                className="w-64 pl-9"
-                value={query}
-                onChange={(e)=>setQuery(e.target.value)}
-                onKeyDown={(e)=>{
-                  if(e.key=="Enter" && query.trim()){
-                    navigate(`/search?q=${encodeURIComponent(query)}`)
-                    setQuery("");
-                  }
-                }}
-              />
-            </div>
+            <SearchBar/>
+            
 
             {/* Add Post */}
             {authStatus && (

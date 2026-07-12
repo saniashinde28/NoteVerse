@@ -13,5 +13,6 @@ import PostForm from "./PostForm/PostForm";
 import PostCard from "./PostCard";
 import Protected from "./AuthLayout";
 import Hero from "./Hero";
+import SearchBar from "./SearchBar/SearchBar";
 
-export {Header,Footer,Container,LogoutBtn,Button,Logo,Input,Select,RTE,Signup,Login,PostForm,PostCard,Protected,Hero}
+export {Header,Footer,Container,LogoutBtn,Button,Logo,Input,Select,RTE,Signup,SearchBar,Login,PostForm,PostCard,Protected,Hero}
