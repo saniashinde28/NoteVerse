@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect,useRef } from "react";
 import service from "../../../appwrite/config";
 
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,8 @@ function SearchBar() {
     const [query, setQuery] = useState("");  //current query
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);   //dropdown visible
-    const [results, setResults] = useState([]);  //matching results
+    const [results, setResults] = useState([]);  //matching results to query
+    const searchRef=useRef(null);
 
     const navigate = useNavigate();
 
@@ -35,8 +36,22 @@ function SearchBar() {
         return () => clearTimeout(timer);  //cleanup function
     }, [query]);
 
+    useEffect(()=>{
+        function handleClickOutside(event){
+            if(searchRef.current && !searchRef.current.contains(event.target)){
+                setOpen(false);
+                setQuery("");
+            }
+        }
+        document.addEventListener("mousedown",handleClickOutside);
+
+        return()=>{
+            document.removeEventListener("mousedown",handleClickOutside);
+        }
+    },[]);
+
     return (
-        <div className="relative hidden lg:block w-72">
+        <div className="relative hidden lg:block w-72" ref={searchRef}>
 
             <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
 
