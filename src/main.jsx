@@ -11,8 +11,9 @@ import Login from './Pages/Login.jsx'
 import AddPost from "./Pages/AddPost";
 import Signup from './Pages/Signup'
 import EditPost from "./Pages/EditPost";
-import Profile from './Pages/Profile.jsx'
-import Search from './Pages/Search'
+import Profile from './Pages/Profile.jsx';
+import Search from './Pages/Search';
+import { Toaster } from 'sonner'
 
 import Post from "./Pages/Post";
 
@@ -93,5 +94,10 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <RouterProvider router={router} />
+    <Toaster
+      position="top-right"
+      richColors
+      closeButton
+    />
   </Provider>
 )

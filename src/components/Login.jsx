@@ -7,7 +7,8 @@ import { Button, Input, Logo } from "./index";
 import authService from "../../appwrite/auth";
 import service from "../../appwrite/config";
 import { useDispatch } from "react-redux";
-import { useForm } from "react-hook-form"
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 
 
@@ -16,10 +17,10 @@ function Login() {
     const dispatch = useDispatch()
 
     const { register, handleSubmit } = useForm()
-    const [err, setErr] = useState(null)
+    const [error, setError] = useState(null)
 
     const login = async (data) => {
-        setErr("")
+        setError("")
         try {
             const session = await authService.login(data)
             if (session) {
@@ -30,12 +31,14 @@ function Login() {
                     profile
                 }));
                 navigate("/")  //redirect programmatically
+                toast.success("Logged in successfully");
 
             }
 
 
         } catch (err) {
-            setErr(err.message)
+            setError(err.message);
+            toast.error(error);
         }
     }
     return (
@@ -63,7 +66,7 @@ function Login() {
                 </p>
 
                 {/* ERROR */}
-                {err && <p className="text-red-600 mt-8 text-center">{err}</p>}
+                {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
 
                 {/* handleSubmit passes the email,password to Login func as data */}
                 <form onSubmit={handleSubmit(login)} className='mt-8'>

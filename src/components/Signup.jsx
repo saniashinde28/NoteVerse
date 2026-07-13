@@ -28,13 +28,15 @@ function Signup() {
                         userData,
                         profile
                     }))
-                    navigate("/")
+                    navigate("/");
+                    toast.success("Signed up successfully");
                 }
             }
 
         }
         catch (err) {
             setErr(err.message);
+            toast.error(err.message);
         }
 
     }

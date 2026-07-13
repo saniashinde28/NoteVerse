@@ -4,6 +4,7 @@ import { Button, Input, Select, RTE } from '../index'
 import service from "../../../appwrite/config";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { toast } from "sonner";
 
 function PostForm({ post }) {
     const { register, handleSubmit, control, watch, setValue, getValues } = useForm({
@@ -32,7 +33,11 @@ function PostForm({ post }) {
             })
 
             if (dbPost) {
-                navigate(`post/${dbPost.$id}`)
+                navigate(`/post/${dbPost.$id}`)
+                toast.success("Post edited");
+            }
+            else{
+                toast.error("Something went wrong");
             }
         }
 
@@ -58,7 +63,14 @@ function PostForm({ post }) {
 
                 if (dbPost) {
                     navigate(`/post/${dbPost.$id}`)
+                    toast.success("Post published");
                 }
+                else{
+                    toast.error("Something went wrong");
+                }
+            }
+            else{
+                toast.error("Failed to upload image");
             }
 
 

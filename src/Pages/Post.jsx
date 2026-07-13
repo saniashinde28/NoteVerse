@@ -4,6 +4,7 @@ import service from "../../appwrite/config";
 import { Button, Container } from "../components";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
+import { toast } from "sonner";
 
 export default function Post() {
     const [author, setAuthor] = useState(null);
@@ -43,6 +44,7 @@ export default function Post() {
             if (status) {
                 service.deleteFile(post.featuredImage);
                 navigate("/");
+                toast.success("Post deleted");
             }
         });
     };
