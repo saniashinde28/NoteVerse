@@ -13,7 +13,8 @@ import Signup from './Pages/Signup'
 import EditPost from "./Pages/EditPost";
 import Profile from './Pages/Profile.jsx';
 import Search from './Pages/Search';
-import { Toaster } from 'sonner'
+import { Toaster } from 'sonner';
+import ErrorPage from './Pages/ErrorPage'
 
 import Post from "./Pages/Post";
 
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: "/",

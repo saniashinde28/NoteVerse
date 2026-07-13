@@ -11,6 +11,7 @@ export default function Post() {
     const [post, setPost] = useState(null);
     const { slug } = useParams();
     const navigate = useNavigate();
+    const [notFound, setNotFound] = useState(false);
 
     const userData = useSelector((state) => state.userData);
 
@@ -20,12 +21,12 @@ export default function Post() {
 
         async function postPage() {
             if (!slug) {
-                navigate("/");
+                setNotFound(true);
                 return;
             }
             const post = await service.getPost(slug);
             if (!post) {
-                navigate("/");
+                setNotFound(true);
                 return;
             }
             setPost(post);
@@ -48,6 +49,31 @@ export default function Post() {
             }
         });
     };
+
+    if (notFound) {
+        return (
+            <Container>
+                <div className="flex min-h-[70vh] flex-col items-center justify-center text-center">
+
+                    <h1 className="text-4xl font-bold">
+                        Post not found
+                    </h1>
+
+                    <p className="mt-3 text-slate-500">
+                        This article doesn't exist or may have been deleted.
+                    </p>
+
+                    <Button
+                        className="mt-6"
+                        onClick={() => navigate("/")}
+                    >
+                        Back Home
+                    </Button>
+
+                </div>
+            </Container>
+        );
+    }
 
     return post ? (
         <div className="py-12">
