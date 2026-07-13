@@ -1,17 +1,34 @@
 import React, { useEffect, useState } from "react";
 import service from "../../appwrite/config";
 import { Container, Hero, PostCard } from "../components";
+import { SkeletonCard } from "../components";
 
 function Home() {
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     service.getPosts().then((posts) => {
       if (posts) {
         setPosts(posts.documents);
       }
+      setLoading(false);
     });
   }, []);
+  if (loading) {
+    return (
+      <>
+        <Hero />
+        <Container>
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <SkeletonCard key={index} />
+            ))}
+          </div>
+        </Container>
+      </>
+    );
+  }
 
   return (
     <>

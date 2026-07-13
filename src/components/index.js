@@ -14,5 +14,6 @@ import PostCard from "./PostCard";
 import Protected from "./AuthLayout";
 import Hero from "./Hero";
 import SearchBar from "./SearchBar/SearchBar";
+import SkeletonCard from "./SkeletonCard";
 
-export {Header,Footer,Container,LogoutBtn,Button,Logo,Input,Select,RTE,Signup,SearchBar,Login,PostForm,PostCard,Protected,Hero}
+export {SkeletonCard,Header,Footer,Container,LogoutBtn,Button,Logo,Input,Select,RTE,Signup,SearchBar,Login,PostForm,PostCard,Protected,Hero}
