@@ -4,18 +4,20 @@ import { Separator } from "@/components/ui/separator";
 
 function Footer() {
     return (
-        <footer className="mt-20 border-t bg-white">
+        <footer className="mt-20 border-t border-border bg-background">
             <Container>
                 <div className="py-6">
 
                     {/* Logo */}
                     <div className="flex items-center gap-3">
                         <Logo width="38px" />
+
                         <div>
-                            <h2 className="text-lg font-semibold">
+                            <h2 className="text-lg font-semibold text-foreground">
                                 SnapBlog
                             </h2>
-                            <p className="text-xs text-slate-500">
+
+                            <p className="text-xs text-muted-foreground">
                                 Share ideas. Read stories.
                             </p>
                         </div>
@@ -32,7 +34,7 @@ function Footer() {
                                 href="https://github.com/saniashinde28"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-slate-500 transition-colors hover:text-black"
+                                className="text-muted-foreground transition-colors hover:text-foreground"
                             >
                                 GitHub
                             </a>
@@ -41,14 +43,14 @@ function Footer() {
                                 href="https://linkedin.com/in/YOUR_USERNAME"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-slate-500 transition-colors hover:text-black"
+                                className="text-muted-foreground transition-colors hover:text-foreground"
                             >
                                 LinkedIn
                             </a>
 
                         </div>
 
-                        <p className="text-sm text-slate-500">
+                        <p className="text-sm text-muted-foreground">
                             © {new Date().getFullYear()} Sania Shinde
                         </p>
 

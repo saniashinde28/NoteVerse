@@ -1,13 +1,12 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useState } from "react";
 import { SearchBar } from "../index";
-
+import { Sun, Moon, PenSquare } from "lucide-react";
+import useTheme from "@/context/ThemeContext";
 import { Container, Logo, LogoutBtn } from "../index";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Avatar,
   AvatarFallback,
@@ -19,15 +18,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { Search, PenSquare } from "lucide-react";
-
 function Header() {
-
   const authStatus = useSelector((state) => state.status);
   const userData = useSelector((state) => state.userData);
   const profile = useSelector((state) => state.profile);
 
+  const { theme, setTheme } = useTheme();
+
   const navigate = useNavigate();
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
 
   const navItems = [
     {
@@ -53,7 +55,7 @@ function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/70">
       <Container>
         <nav className="flex h-16 items-center justify-between">
 
@@ -63,7 +65,8 @@ function Header() {
             className="flex items-center gap-2"
           >
             <Logo width="40px" />
-            <span className="text-xl font-bold">
+
+            <span className="text-xl font-bold text-foreground">
               SnapBlog
             </span>
           </Link>
@@ -88,14 +91,26 @@ function Header() {
           {/* Right Side */}
           <div className="flex items-center gap-3">
 
+            {/* Theme Toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+            >
+              {theme === "dark" ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </Button>
+
             {/* Search */}
-            <SearchBar/>
-            
+            <SearchBar />
 
             {/* Add Post */}
             {authStatus && (
               <Button
-                className="bg-green-600 hover:bg-green-700"
+                className="bg-emerald-600 text-white hover:bg-emerald-700"
                 onClick={() => navigate("/add-post")}
               >
                 <PenSquare className="mr-2 h-4 w-4" />
@@ -117,13 +132,12 @@ function Header() {
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent align="end">
-
-                  {/* Change this route later when profile routing is ready */}
                   <DropdownMenuItem
-                    onClick={() =>{
-                      if(profile)navigate(`/profile/${profile.username}`)}
-
-                    } 
+                    onClick={() => {
+                      if (profile) {
+                        navigate(`/profile/${profile.username}`);
+                      }
+                    }}
                   >
                     Profile
                   </DropdownMenuItem>
@@ -131,10 +145,10 @@ function Header() {
                   <DropdownMenuItem asChild>
                     <LogoutBtn />
                   </DropdownMenuItem>
-
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
+
           </div>
         </nav>
       </Container>

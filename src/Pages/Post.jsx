@@ -18,30 +18,30 @@ export default function Post() {
     const isAuthor = post && userData ? post.userId === userData.$id : false;
 
     useEffect(() => {
-
         async function postPage() {
             if (!slug) {
                 setNotFound(true);
                 return;
             }
+
             const post = await service.getPost(slug);
+
             if (!post) {
                 setNotFound(true);
                 return;
             }
+
             setPost(post);
 
             const profile = await service.getProfileByUserId(post.userId);
             setAuthor(profile);
-
-
-
         }
+
         postPage();
     }, [slug, navigate]);
 
     const deletePost = () => {
-        service.deletePost(post.$id).then((status) => {  //if deleted, status returns TRUE
+        service.deletePost(post.$id).then((status) => {
             if (status) {
                 service.deleteFile(post.featuredImage);
                 navigate("/");
@@ -55,11 +55,11 @@ export default function Post() {
             <Container>
                 <div className="flex min-h-[70vh] flex-col items-center justify-center text-center">
 
-                    <h1 className="text-4xl font-bold">
+                    <h1 className="text-4xl font-bold text-foreground">
                         Post not found
                     </h1>
 
-                    <p className="mt-3 text-slate-500">
+                    <p className="mt-3 text-muted-foreground">
                         This article doesn't exist or may have been deleted.
                     </p>
 
@@ -83,16 +83,16 @@ export default function Post() {
                     {/* Title */}
                     <div className="mb-8">
 
-                        <h1 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight text-slate-900">
+                        <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl">
                             {post.title}
                         </h1>
 
-                        <div className="mt-5 flex items-center justify-between flex-wrap gap-4">
+                        <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
 
                             {author && (
                                 <Link
                                     to={`/profile/${author.username}`}
-                                    className="text-base text-slate-600 hover:text-black transition"
+                                    className="text-base text-muted-foreground transition-colors hover:text-foreground"
                                 >
                                     Written by{" "}
                                     <span className="font-semibold">
@@ -105,7 +105,9 @@ export default function Post() {
                                 <div className="flex gap-3">
                                     <Button
                                         variant="outline"
-                                        onClick={() => navigate(`/edit-post/${post.$id}`)}
+                                        onClick={() =>
+                                            navigate(`/edit-post/${post.$id}`)
+                                        }
                                     >
                                         Edit
                                     </Button>
@@ -129,26 +131,31 @@ export default function Post() {
                         <img
                             src={service.getFileView(post.featuredImage)}
                             alt={post.title}
-                            className="w-full max-w-3xl h-[350px] rounded-2xl object-cover shadow-md"
+                            className="h-[350px] w-full max-w-3xl rounded-2xl object-cover shadow-md"
                         />
                     </div>
 
-                    <hr className="mb-10" />
+                    <hr className="mb-10 border-border" />
 
                     {/* Content */}
 
                     <div
                         className="
-            prose
-            prose-lg
-            max-w-none
-            prose-headings:font-bold
-            prose-img:rounded-xl
-            prose-pre:rounded-xl
-            prose-a:text-blue-600
-            prose-p:text-slate-700
-            prose-p:leading-8
-          "
+                            prose
+                            prose-lg
+                            max-w-none
+                            prose-headings:text-foreground
+                            prose-headings:font-bold
+                            prose-p:text-foreground
+                            prose-p:leading-8
+                            prose-strong:text-foreground
+                            prose-li:text-foreground
+                            prose-blockquote:text-muted-foreground
+                            prose-a:text-primary
+                            prose-img:rounded-xl
+                            prose-pre:rounded-xl
+                            dark:prose-invert
+                        "
                     >
                         {parse(post.content)}
                     </div>
@@ -158,3 +165,4 @@ export default function Post() {
         </div>
     ) : null;
 }
+

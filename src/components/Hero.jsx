@@ -8,20 +8,20 @@ export default function Hero() {
   const authStatus = useSelector((state) => state.status);
 
   return (
-    <section className="border-b bg-white">
+    <section className="border-b border-border bg-background">
       <div className="mx-auto max-w-5xl px-6 py-24 text-center">
 
-        <p className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">
+        <p className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-primary">
           Welcome to SnapBlog
         </p>
 
-        <h1 className="text-5xl font-bold tracking-tight text-slate-900 md:text-6xl">
+        <h1 className="text-5xl font-bold tracking-tight text-foreground md:text-6xl">
           A place to write,
           <br />
           share, and discover stories.
         </h1>
 
-        <p className="mx-auto mt-8 max-w-2xl text-lg leading-8 text-slate-600">
+        <p className="mx-auto mt-8 max-w-2xl text-lg leading-8 text-muted-foreground">
           Whether you're documenting your learning, sharing experiences,
           or exploring new ideas, SnapBlog gives your words a home.
         </p>
@@ -59,3 +59,4 @@ export default function Hero() {
     </section>
   );
 }
+
