@@ -2,21 +2,33 @@ import React, { useEffect, useState } from "react";
 import service from "../../appwrite/config";
 import { Container, Hero, PostCard } from "../components";
 import { SkeletonCard } from "../components";
+import { useQuery } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
 
 function Home() {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [posts, setPosts] = useState([]);
+  // const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    service.getPosts().then((posts) => {
-      if (posts) {
-        setPosts(posts.documents);
-      }
-      setLoading(false);
+  // useEffect(() => {
+  //   service.getPosts().then((posts) => {
+  //     if (posts) {
+  //       setPosts(posts.documents);
+  //     }
+  //     setLoading(false);
+  //   });
+  // }, []);
+
+  const { data: posts,
+    isLoading,
+    error,
+    refetch } = useQuery({
+      queryKey: ["posts"],
+      queryFn: ()=>service.getPosts(),
+      select: ((data) => data.documents),
     });
-  }, []);
 
-  if (loading) {
+
+  if (isLoading) {
     return (
       <>
         <Hero />
@@ -30,6 +42,29 @@ function Home() {
         </Container>
       </>
     );
+  }
+
+  if (error) {
+    return (
+      <Container>
+        <div className="flex min-h-[60vh] items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold">
+              Something went wrong
+            </h2>
+
+            <p className="mt-2 text-muted-foreground">
+              Couldn't load posts.
+            </p>
+
+            <Button onClick={() => refetch()}>
+              Retry
+            </Button>
+          </div>
+        </div>
+      </Container>
+    );
+
   }
 
   return (
