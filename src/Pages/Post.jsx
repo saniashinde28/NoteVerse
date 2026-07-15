@@ -5,40 +5,55 @@ import { Button, Container } from "../components";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Post() {
-    const [author, setAuthor] = useState(null);
-    const [post, setPost] = useState(null);
     const { slug } = useParams();
     const navigate = useNavigate();
-    const [notFound, setNotFound] = useState(false);
 
     const userData = useSelector((state) => state.userData);
 
     const isAuthor = post && userData ? post.userId === userData.$id : false;
 
-    useEffect(() => {
-        async function postPage() {
-            if (!slug) {
-                setNotFound(true);
-                return;
-            }
+    // useEffect(() => {
+    //     async function postPage() {
+    //         if (!slug) {
+    //             setNotFound(true);
+    //             return;
+    //         }
 
-            const post = await service.getPost(slug);
+    //         const post = await service.getPost(slug);
 
-            if (!post) {
-                setNotFound(true);
-                return;
-            }
+    //         if (!post) {
+    //             setNotFound(true);
+    //             return;
+    //         }
 
-            setPost(post);
+    //         setPost(post);
 
-            const profile = await service.getProfileByUserId(post.userId);
-            setAuthor(profile);
-        }
+    //         const profile = await service.getProfileByUserId(post.userId);
+    //         setAuthor(profile);
+    //     }
 
-        postPage();
-    }, [slug, navigate]);
+    //     postPage();
+    // }, [slug, navigate]);
+
+    const {data:post,
+        isLoading,
+        error
+    }=useQuery({
+        queryKey:["post",slug],
+        queryFn:(()=>service.getPost(slug)),
+        enabled:!!slug
+    });
+
+    const {data:author}=useQuery({
+        queryKey:["profile",post?.userId],
+        queryFn:(()=>service.getProfileByUserId(post.userId)),
+        enabled:!!post
+
+    });
 
     const deletePost = () => {
         service.deletePost(post.$id).then((status) => {
@@ -50,7 +65,7 @@ export default function Post() {
         });
     };
 
-    if (notFound) {
+    if (error||!post) {
         return (
             <Container>
                 <div className="flex min-h-[70vh] flex-col items-center justify-center text-center">
@@ -74,6 +89,20 @@ export default function Post() {
             </Container>
         );
     }
+    
+    if (isLoading) {
+        return (
+            <Container>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    
+                    {Array.from({ length: 8 }).map((_, index) => (
+                        <SkeletonCard key={index} />
+                    ))}
+    
+                </div>
+            </Container>
+        );
+      };
 
     return post ? (
         <div className="py-12">
