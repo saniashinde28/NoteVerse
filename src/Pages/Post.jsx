@@ -7,14 +7,16 @@ import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 
 export default function Post() {
     const { slug } = useParams();
     const navigate = useNavigate();
 
     const userData = useSelector((state) => state.userData);
+    const queryClient = useQueryClient();
 
-   
+
     // useEffect(() => {
     //     async function postPage() {
     //         if (!slug) {
@@ -38,36 +40,73 @@ export default function Post() {
     //     postPage();
     // }, [slug, navigate]);
 
-    const {data:post,
+    const { data: post,
         isLoading,
         error
-    }=useQuery({
-        queryKey:["post",slug],
-        queryFn:(()=>service.getPost(slug)),
-        enabled:!!slug
+    } = useQuery({
+        queryKey: ["post", slug],
+        queryFn: (() => service.getPost(slug)),
+        enabled: !!slug
     });
 
-    const {data:author}=useQuery({
-        queryKey:["profile",post?.userId],
-        queryFn:(()=>service.getProfileByUserId(post.userId)),
-        enabled:!!post
+    const { data: author } = useQuery({
+        queryKey: ["profile", post?.userId],
+        queryFn: (() => service.getProfileByUserId(post.userId)),
+        enabled: !!post
 
     });
 
-    const deletePost = () => {
-        service.deletePost(post.$id).then((status) => {
-            if (status) {
-                service.deleteFile(post.featuredImage);
-                navigate("/");
-                toast.success("Post deleted");
-            }
-        });
+    const deleteMutation = useMutation({
+        mutationFn: (postId) => service.deletePost(postId),
+        onSuccess: () => {
+            service.deleteFile(post.featuredImage);
+
+            queryClient.invalidateQueries({
+                queryKey: ["posts"],
+            });
+
+            queryClient.invalidateQueries({
+                queryKey: ["user-posts", post?.userId],
+            });
+
+            queryClient.removeQueries({
+                queryKey: ["edit-post", slug],
+            });
+
+            queryClient.removeQueries({
+                queryKey: ["post", slug],
+            });
+
+            navigate("/");
+            toast.success("Post deleted");
+        },
+
+        onError: () => {
+            toast.error("Failed to delete post");
+        },
+
+
+
+    })
+
+    const isAuthor = post && userData ? post.userId === userData.$id : false;
+
+    if (isLoading) {
+        return (
+            <Container>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+
+                    {Array.from({ length: 8 }).map((_, index) => (
+                        <Skeleton key={index} />
+                    ))}
+
+                </div>
+            </Container>
+        );
     };
 
-     const isAuthor = post && userData ? post.userId === userData.$id : false;
 
-
-    if (error||!post) {
+    if (error || !post) {
         return (
             <Container>
                 <div className="flex min-h-[70vh] flex-col items-center justify-center text-center">
@@ -91,20 +130,7 @@ export default function Post() {
             </Container>
         );
     }
-    
-    if (isLoading) {
-        return (
-            <Container>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-    
-                    {Array.from({ length: 8 }).map((_, index) => (
-                        <SkeletonCard key={index} />
-                    ))}
-    
-                </div>
-            </Container>
-        );
-      };
+
 
     return post ? (
         <div className="py-12">
@@ -145,9 +171,10 @@ export default function Post() {
 
                                     <Button
                                         variant="destructive"
-                                        onClick={deletePost}
+                                        onClick={()=>deleteMutation.mutate(post.$id)}
+                                        disabled={deleteMutation.isPending}
                                     >
-                                        Delete
+                                        {deleteMutation.isPending?"Deleting":"Delete"}
                                     </Button>
                                 </div>
                             )}
