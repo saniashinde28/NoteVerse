@@ -89,6 +89,5 @@ return (
     </div>
 );
 }
-};
 
 export default Profile;
