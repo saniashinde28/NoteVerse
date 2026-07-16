@@ -14,8 +14,7 @@ export default function Post() {
 
     const userData = useSelector((state) => state.userData);
 
-    const isAuthor = post && userData ? post.userId === userData.$id : false;
-
+   
     // useEffect(() => {
     //     async function postPage() {
     //         if (!slug) {
@@ -64,6 +63,9 @@ export default function Post() {
             }
         });
     };
+
+     const isAuthor = post && userData ? post.userId === userData.$id : false;
+
 
     if (error||!post) {
         return (
