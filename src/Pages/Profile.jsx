@@ -22,7 +22,6 @@ function Profile() {
             queryFn: (() => service.getPostsByUser(profileUser?.userId)),
             enabled: !!profileUser?.userId
         });
-};
 
 
 
@@ -89,5 +88,6 @@ return (
     </div>
 );
 }
+};
 
 export default Profile;
