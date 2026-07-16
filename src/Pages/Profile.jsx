@@ -37,6 +37,7 @@ if (!profileUser) {
             </p>
         </div>
     );
+};
 
 
 return (
