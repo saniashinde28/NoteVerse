@@ -5,6 +5,7 @@ import service from "../../../appwrite/config";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 function PostForm({ post }) {
     const {
@@ -25,52 +26,92 @@ function PostForm({ post }) {
 
     const navigate = useNavigate();
     const userData = useSelector((state) => state.userData);
+    const queryClient = useQueryClient();
 
-    const submit = async (data) => {
-        if (post) {
-            const file = data.image[0]
-                ? await service.uploadFile(data.image[0])
-                : null;
+    const createPostMutation = useMutation({
+        mutationFn: async (data) => {
+            const file = data.image[0] ?
+                await service.uploadFile(data.image[0]) :
+                null;
+
+            if (!file) {
+                throw new error("Failed to upload image");
+            }
+
+            data.featuredImage = file.$id;
+
+            return await service.createPost({
+                ...data,
+                userId: userData.$id,
+            });
+
+        },
+        onSuccess: (dbPost) => {
+            queryClient.invalidateQueries({
+                queryKey: ["posts"],
+            });
+
+            queryClient.invalidateQueries({
+                queryKey: ["user-posts", userData.$id],
+            });
+
+            navigate(`/post/${dbPost.$id}`);
+            toast.success("Post published!");
+        },
+        onError: (error) => {
+            toast.error(error.message);
+        },
+    });
+
+    const updatePostMutation = useMutation({
+        mutationFn: async (data) => {
+            const file = data.image[0] ? await service.uploadFile(data.image[0]) : null;
+            if (file) {
+                data.featuredImage = file?file.$id:post.featuredImage;
+            }
+            const dbPost = await service.updatePost(post.$id,{
+                ...data
+            });
+
+            if (!dbPost) {
+                throw new Error("Failed to update post");
+            }
 
             if (file) {
                 service.deleteFile(post.featuredImage);
             }
 
-            const dbPost = await service.updatePost(post.$id, {
-                ...data,
-                featuredImage: file ? file.$id : undefined,
+            return dbPost;
+        },
+        onSuccess: (dbPost) => {
+            queryClient.invalidateQueries({
+                queryKey: ["posts"],
             });
 
-            if (dbPost) {
-                navigate(`/post/${dbPost.$id}`);
-                toast.success("Post edited");
-            } else {
-                toast.error("Something went wrong");
-            }
+            queryClient.invalidateQueries({
+                queryKey: ["user-posts", post.userId],
+            });
+
+            queryClient.invalidateQueries({
+                queryKey: ["post", post.slug],
+            });
+
+            navigate(`/post/${dbPost.$id}`);
+            toast.success("Post edited");
+        },
+        onError: (error) => {
+            toast.error(error.message);
+        }
+    });
+
+    const submit = async (data) => {
+        if (post) {
+            updatePostMutation.mutate(data);
         } else {
-            const file = data.image[0]
-                ? await service.uploadFile(data.image[0])
-                : null;
-
-            if (file) {
-                data.featuredImage = file.$id;
-
-                const dbPost = await service.createPost({
-                    ...data,
-                    userId: userData.$id,
-                });
-
-                if (dbPost) {
-                    navigate(`/post/${dbPost.$id}`);
-                    toast.success("Post published");
-                } else {
-                    toast.error("Something went wrong");
-                }
-            } else {
-                toast.error("Failed to upload image");
-            }
+            createPostMutation.mutate(data);
         }
     };
+
 
     const slugTransform = useCallback((value) => {
         if (value && typeof value === "string") {
@@ -178,11 +219,10 @@ function PostForm({ post }) {
 
                 <Button
                     type="submit"
-                    className={`w-full ${
-                        post
-                            ? "bg-emerald-600 hover:bg-emerald-700 text-white"
-                            : ""
-                    }`}
+                    className={`w-full ${post
+                        ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                        : ""
+                        }`}
                 >
                     {post ? "Update" : "Submit"}
                 </Button>
