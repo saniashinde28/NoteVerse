@@ -18,7 +18,7 @@ function Home() {
   //   });
   // }, []);
 
-  const { data: posts,
+  const { data: posts=[],
     isLoading,
     error,
     refetch } = useQuery({

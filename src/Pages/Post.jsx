@@ -16,30 +16,6 @@ export default function Post() {
     const userData = useSelector((state) => state.userData);
     const queryClient = useQueryClient();
 
-
-    // useEffect(() => {
-    //     async function postPage() {
-    //         if (!slug) {
-    //             setNotFound(true);
-    //             return;
-    //         }
-
-    //         const post = await service.getPost(slug);
-
-    //         if (!post) {
-    //             setNotFound(true);
-    //             return;
-    //         }
-
-    //         setPost(post);
-
-    //         const profile = await service.getProfileByUserId(post.userId);
-    //         setAuthor(profile);
-    //     }
-
-    //     postPage();
-    // }, [slug, navigate]);
-
     const { data: post,
         isLoading,
         error
@@ -56,38 +32,119 @@ export default function Post() {
 
     });
 
+
     const deleteMutation = useMutation({
         mutationFn: (postId) => service.deletePost(postId),
-        onSuccess: () => {
-            service.deleteFile(post.featuredImage);
 
-            queryClient.invalidateQueries({
+        // 2. Runs immediately before mutationFn
+        onMutate: async (postId) => {
+
+            // Stop ongoing fetches so they don't overwrite
+            // our optimistic cache update
+            await queryClient.cancelQueries({
                 queryKey: ["posts"],
             });
-
-            queryClient.invalidateQueries({
-                queryKey: ["user-posts", post?.userId],
+            await queryClient.cancelQueries({
+                queryKey: ["user-posts", post.userId],
             });
 
-            queryClient.removeQueries({
-                queryKey: ["edit-post", slug],
-            });
+            //save prev data
+            const previousPost = queryClient.getQueryData(["posts"]);
+            const previousUserPosts = queryClient.getQueryData(["user-posts", post.userId]);
 
+            // Immediately remove post from all posts cache
+            queryClient.setQueryData(
+                ["posts"],
+                (oldPosts) => {
+
+                    if (!oldPosts) return oldPosts;
+                    oldPosts=oldPosts.documents;
+
+                    return oldPosts.filter(
+                        (item) => item.$id !== postId
+                    );
+                }
+            );
+
+            // Immediately remove post from user's posts cache
+            queryClient.setQueryData(
+                ["user-posts", post.userId],
+                (oldPosts) => {
+
+                    if (!oldPosts) return oldPosts;
+                    oldPosts=oldPosts.documents;
+
+                    return oldPosts.filter(
+                        (item) => item.$id !== postId
+                    );
+                }
+            );
+
+            return {
+                previousPost,
+                previousUserPosts
+            };
+
+
+        },
+        // 3. Runs if server deletion fails
+        onError: (error, postId, context) => {
+            console.log("Mutation error:", error);
+            console.log("Context:", context);
+
+            // Restore old posts cache
+            queryClient.setQueryData(
+                ["posts"],
+                context.previousPost
+            );
+
+            // Restore old user posts cache
+            queryClient.setQueryData(
+                ["user-posts", post.userId],
+                context.previousUserPosts
+            );
+
+            toast.error("Failed to delete post");
+        },
+
+        // 4. Runs only after successful server deletion
+        onSuccess: async () => {
+
+            // Delete associated image
+            await service.deleteFile(
+                post.featuredImage
+            );
+
+            // Remove individual post cache
             queryClient.removeQueries({
                 queryKey: ["post", slug],
+            });
+
+            // Remove edit-post cache
+            queryClient.removeQueries({
+                queryKey: ["edit-post", slug],
             });
 
             navigate("/");
             toast.success("Post deleted");
         },
 
-        onError: () => {
-            toast.error("Failed to delete post");
+        // 5. Runs after success OR failure
+        onSettled: () => {
+
+            // Make sure final data matches server
+            queryClient.invalidateQueries({
+                queryKey: ["posts"],
+            });
+
+            queryClient.invalidateQueries({
+                queryKey: ["user-posts", post.userId],
+            });
         },
 
 
 
-    })
+    });
 
     const isAuthor = post && userData ? post.userId === userData.$id : false;
 
@@ -171,10 +228,10 @@ export default function Post() {
 
                                     <Button
                                         variant="destructive"
-                                        onClick={()=>deleteMutation.mutate(post.$id)}
+                                        onClick={() => deleteMutation.mutate(post.$id)}
                                         disabled={deleteMutation.isPending}
                                     >
-                                        {deleteMutation.isPending?"Deleting":"Delete"}
+                                        {deleteMutation.isPending ? "Deleting" : "Delete"}
                                     </Button>
                                 </div>
                             )}

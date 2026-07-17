@@ -172,9 +172,10 @@ export class Service {
                 ]
             )
 
-            return result.documents[0]
+            return result.documents[0] || null;
         } catch (err) {
-            console.log(err)
+            console.log(err);
+            return null;
         }
     }
 
