@@ -1,30 +1,27 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { lazy, Suspense } from 'react'
 import './index.css'
 import App from './App.jsx'
 import { Provider } from 'react-redux'
 import { store } from '../store/store.js'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Protected from './components/AuthLayout.jsx'
-import Home from './Pages/Home.jsx'
-import Login from './Pages/Login.jsx'
-import AddPost from "./Pages/AddPost";
-import Signup from './Pages/Signup'
-import EditPost from "./Pages/EditPost";
-import Profile from './Pages/Profile.jsx';
-import Search from './Pages/Search';
+const Home = lazy(() => import('./Pages/Home.jsx'));
+const Login = lazy(() => import("./Pages/Login"));
+const Signup = lazy(() => import("./Pages/Signup"));
+const AddPost = lazy(() => import("./Pages/AddPost"));
+const EditPost = lazy(() => import("./Pages/EditPost"));
+const Profile = lazy(() => import("./Pages/Profile"));
+const Search = lazy(() => import("./Pages/Search"));
+const Post = lazy(() => import("./Pages/Post"));
+const AllPosts = lazy(() => import("./Pages/AllPosts"));
 import { Toaster } from 'sonner';
 import ErrorPage from './Pages/ErrorPage';
 import { ThemeProvider } from './context/ThemeContext';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
-console.log(queryClient);
-console.log(queryClient.mount);
-
-import Post from "./Pages/Post";
-
-import AllPosts from "./Pages/AllPosts";
 
 const router = createBrowserRouter([
   {
@@ -103,13 +100,17 @@ createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <RouterProvider router={router} />
-        <Toaster
-          position="top-right"
-          richColors
-          closeButton
-        />
+        <Suspense fallback={<div className="flex h-screen items-center justify-center">
+          <p className="text-lg">Loading...</p>
+        </div>}>
+          <RouterProvider router={router} />
+          <Toaster
+            position="top-right"
+            richColors
+            closeButton
+          />
+        </Suspense>
       </ThemeProvider>
     </QueryClientProvider>
-  </Provider>
+  </Provider >
 )
