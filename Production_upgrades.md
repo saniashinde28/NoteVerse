@@ -11,18 +11,18 @@
 
 ## Data Fetching
 
-- [ ] TanStack Query
-- [ ] Optimistic mutations
-- [ ] Infinite queries
-- [ ] Background refetching
+- [x] TanStack Query
+- [x] Optimistic mutations
+- [] Infinite queries
+- [x] Background refetching
 
 ## Performance
 
-- [ ] React.lazy
-- [ ] Suspense
-- [ ] Image lazy loading
-- [ ] Route code splitting
-- [ ] Bundle optimization
+- [x] React.lazy
+- [x] Suspense
+- [x] Image lazy loading
+- [x] Route code splitting
+- [x] Bundle optimization
 
 ## Reliability
 
