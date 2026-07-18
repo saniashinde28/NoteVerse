@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Input, Select, RTE } from "../index";
+import { Button, Input, Select } from "../index";
+const RTE = lazy(() => import('../RTE'))
+import { lazy, Suspense } from "react";
 import service from "../../../appwrite/config";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -67,9 +69,9 @@ function PostForm({ post }) {
         mutationFn: async (data) => {
             const file = data.image[0] ? await service.uploadFile(data.image[0]) : null;
             if (file) {
-                data.featuredImage = file?file.$id:post.featuredImage;
+                data.featuredImage = file ? file.$id : post.featuredImage;
             }
-            const dbPost = await service.updatePost(post.$id,{
+            const dbPost = await service.updatePost(post.$id, {
                 ...data
             });
 
@@ -176,12 +178,15 @@ function PostForm({ post }) {
                     }
                 />
 
-                <RTE
-                    label="Content :"
-                    name="content"
-                    control={control}
-                    defaultValue={getValues("content")}
-                />
+                <Suspense fallback={<div>loading</div>}>
+
+                    <RTE
+                        label="Content :"
+                        name="content"
+                        control={control}
+                        defaultValue={getValues("content")}
+                    />
+                </Suspense>
 
             </div>
 
