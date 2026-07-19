@@ -13,7 +13,7 @@
 
 - [x] TanStack Query
 - [x] Optimistic mutations
-- [] Infinite queries
+- [ ] Infinite queries
 - [x] Background refetching
 
 ## Performance

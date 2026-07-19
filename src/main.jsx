@@ -20,7 +20,7 @@ import { Toaster } from 'sonner';
 import ErrorPage from './Pages/ErrorPage';
 import { ThemeProvider } from './context/ThemeContext';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
+import ErrorBoundary from "./components/ErrorBoundary";
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
@@ -98,19 +98,21 @@ const router = createBrowserRouter([
 ])
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <Suspense fallback={<div className="flex h-screen items-center justify-center">
-          <p className="text-lg">Loading...</p>
-        </div>}>
-          <RouterProvider router={router} />
-          <Toaster
-            position="top-right"
-            richColors
-            closeButton
-          />
-        </Suspense>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <Suspense fallback={<div className="flex h-screen items-center justify-center">
+            <p className="text-lg">Loading...</p>
+          </div>}>
+            <RouterProvider router={router} />
+            <Toaster
+              position="top-right"
+              richColors
+              closeButton
+            />
+          </Suspense>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   </Provider >
 )
