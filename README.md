@@ -6,10 +6,10 @@ The application follows modern React development practices with optimized data f
 
 ---
 ![alt text](image.png)
-- Landing Page
+## Landing Page
 
 ![alt text](image-2.png)
-- Rich Text Editor for Blogs
+## Rich Text Editor for Blogs
 #  Features
 
 ##  Authentication & Authorization
