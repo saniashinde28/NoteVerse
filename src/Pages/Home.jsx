@@ -18,12 +18,12 @@ function Home() {
   //   });
   // }, []);
 
-  const { data: posts=[],
+  const { data: posts = [],
     isLoading,
     error,
     refetch } = useQuery({
       queryKey: ["posts"],
-      queryFn: ()=>service.getPosts(),
+      queryFn: () => service.getPosts(),
       select: ((data) => data.documents),
     });
 

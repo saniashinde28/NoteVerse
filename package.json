@@ -16,6 +16,7 @@
     "@mui/icons-material": "^9.2.0",
     "@mui/material": "^9.2.0",
     "@reduxjs/toolkit": "^2.12.0",
+    "@sentry/react": "^10.66.0",
     "@tanstack/react-query": "^5.101.2",
     "@tinymce/tinymce-react": "^6.3.0",
     "appwrite": "^26.0.0",

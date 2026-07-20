@@ -5,7 +5,7 @@ import './index.css'
 import App from './App.jsx'
 import { Provider } from 'react-redux'
 import { store } from '../store/store.js'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter,RouterProvider } from 'react-router-dom'
 import Protected from './components/AuthLayout.jsx'
 const Home = lazy(() => import('./Pages/Home.jsx'));
 const Login = lazy(() => import("./Pages/Login"));
@@ -21,6 +21,8 @@ import ErrorPage from './Pages/ErrorPage';
 import { ThemeProvider } from './context/ThemeContext';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ErrorBoundary from "./components/ErrorBoundary";
+import "./sentry";
+
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([

@@ -53,7 +53,6 @@ function Header() {
       active: !authStatus,
     },
   ];
-
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/70">
       <Container>
