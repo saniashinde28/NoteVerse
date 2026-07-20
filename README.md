@@ -5,8 +5,10 @@ NoteVerse is a modern full-stack blogging platform built with **React, Redux Too
 The application follows modern React development practices with optimized data fetching, caching, error monitoring, performance improvements, and scalable component architecture.
 
 ---
-
-# ✨ Features
+![alt text](image.png)
+![alt text](image-1.png)
+![alt text](image-2.png)
+#  Features
 
 ##  Authentication & Authorization
 - User signup and login using Appwrite Authentication
